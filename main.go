@@ -23,7 +23,7 @@ func main() {
 		panic(err)
 	}
 
-	ip := "103.121.38.138"
+	ip := "103.121.38.138" //random proxy IP to test with
 	proxy, err := db.IsProxy(ip)
 
 	if err != nil {
