@@ -1,4 +1,4 @@
-module github.com/MrBoombastic/GrOxyP
+module GrOxyP
 
 go 1.17
 

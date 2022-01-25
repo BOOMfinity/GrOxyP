@@ -1,21 +1,24 @@
 package database
 
 import (
+	"GrOxyP/config"
+	"GrOxyP/unzip"
 	"errors"
 	"fmt"
-	"github.com/MrBoombastic/GrOxyP/unzip"
 	"io"
 	"net/http"
 	"os"
 )
 
-func UpdateDatabase() error {
+var cfg = config.GetConfig()
+
+func UpdateDatabase(forceDisable bool) error { //arg for debug
+	if forceDisable {
+		return nil
+	}
 	//Source: https://golang.cafe/blog/golang-unzip-file-example.html
 	fmt.Println("Downloading...")
-
-	databaseCode := "PX2LITEBIN"
-	token := "nope"
-	URL := fmt.Sprintf("https://www.ip2location.com/download?token=%v&file=%v", token, databaseCode)
+	URL := fmt.Sprintf("https://www.ip2location.com/download?token=%v&file=%v", cfg.DatabaseToken, cfg.DatabaseCode)
 	response, err := http.Get(URL)
 	if err != nil {
 		return err
