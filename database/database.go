@@ -2,15 +2,17 @@ package database
 
 import (
 	"GrOxyP/config"
-	"GrOxyP/unzip"
+	"bufio"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 )
 
 var cfg = config.GetConfig()
+var nets []*net.IPNet
 
 func UpdateDatabase(disableUpdate bool) error { //arg for debug
 	if disableUpdate {
@@ -18,8 +20,7 @@ func UpdateDatabase(disableUpdate bool) error { //arg for debug
 	}
 	//Source: https://golang.cafe/blog/golang-unzip-file-example.html
 	fmt.Println("INFO: Downloading database...")
-	URL := fmt.Sprintf("https://www.ip2location.com/download?token=%v&file=%v", cfg.DatabaseToken, cfg.DatabaseCode)
-	response, err := http.Get(URL)
+	response, err := http.Get("https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt")
 	if err != nil {
 		return err
 	}
@@ -27,7 +28,7 @@ func UpdateDatabase(disableUpdate bool) error { //arg for debug
 	if response.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("received code %v while downloading database", response.StatusCode))
 	}
-	file, err := os.Create("db.zip")
+	file, err := os.Create(cfg.DatabaseFilename)
 	if err != nil {
 		return err
 	}
@@ -37,8 +38,7 @@ func UpdateDatabase(disableUpdate bool) error { //arg for debug
 		return err
 	}
 	fmt.Println("INFO: Downloading done")
-
-	err = unpackDatabase()
+	err = convertDatabase()
 	if err != nil {
 		return err
 	}
@@ -46,12 +46,32 @@ func UpdateDatabase(disableUpdate bool) error { //arg for debug
 	return nil
 }
 
-func unpackDatabase() error {
-	fmt.Println("INFO: Unzipping...")
-	err := unzip.Run("db.zip", "db")
+func convertDatabase() error {
+	file, err := os.Open(cfg.DatabaseFilename)
 	if err != nil {
 		return err
 	}
-	fmt.Println("INFO: Unzipping done")
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if _, currNet, err := net.ParseCIDR(scanner.Text()); err == nil {
+			nets = append(nets, currNet)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return err
+	}
 	return nil
+}
+
+func SearchIPInDatabase(query string) (bool, string) {
+	q := net.ParseIP(query)
+	for _, currNet := range nets {
+		if currNet.Contains(q) {
+			return true, currNet.String()
+		}
+	}
+	return false, ""
 }

@@ -1,6 +1,5 @@
 {
-  "databaseCode": "PX2LITEBIN",
-  "databaseToken": "token_from_www.ip2location.com",
-  "databaseFilename": "IP2PROXY-LITE-PX2.BIN",
+  "databaseDownloadURL": "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt",
+  "databaseFilename": "ips.txt",
   "webserverPort": 5656
 }

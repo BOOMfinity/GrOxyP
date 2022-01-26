@@ -1,47 +1,41 @@
 package webserver
 
 import (
+	"GrOxyP/database"
 	"encoding/json"
 	"fmt"
-	"github.com/ip2location/ip2proxy-go"
 	"net/http"
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
+func hello(w http.ResponseWriter, _ *http.Request) {
 	_, err := fmt.Fprintf(w, "OK\n")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 }
-func ip(db *ip2proxy.DB) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, req *http.Request) {
-		//IP for testing: "103.121.38.138" - should be proxy
-		ip := req.FormValue("q")
-		proxy, err := db.IsProxy(ip)
 
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		response := apiResponseIpType{
-			IP:   ip,
-			Type: proxyTypes[(proxy)],
-		}
-		err = json.NewEncoder(w).Encode(response)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
+func ip(w http.ResponseWriter, req *http.Request) {
+	//IP for testing: uk2345.nordvpn.com [194.35.232.123] - should be proxy
+	ip := req.FormValue("q")
+	proxy, rule := database.SearchIPInDatabase(ip)
+	w.Header().Set("Content-Type", "application/json")
+	response := apiResponseIpType{
+		IP:    ip,
+		Proxy: proxy,
+		Rule:  rule,
+	}
+	err := json.NewEncoder(w).Encode(response)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 }
 
-func Listen(db *ip2proxy.DB, port uint16) error {
+func Listen(port uint16) error {
 	//Source: https://gobyexample.com/http-servers
 	http.HandleFunc("/", hello)
-	http.HandleFunc("/ip", ip(db))
+	http.HandleFunc("/ip", ip)
 
 	fmt.Println(fmt.Sprintf("INFO: Listening on port %v", port))
 	err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
