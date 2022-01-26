@@ -1,4 +1,5 @@
 # GrOxyP - Go Proxy
+[![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity-Developers/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity-Developers/GrOxyP)
 
 Check if IP is a VPN or proxy. Written in Go.
 
