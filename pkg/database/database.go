@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/BOOMfinity-Developers/GrOxyP/config"
+	"github.com/BOOMfinity-Developers/GrOxyP/pkg/config"
 	"io"
 	"net"
 	"net/http"

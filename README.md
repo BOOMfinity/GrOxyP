@@ -53,7 +53,7 @@ About 10% of usage of CPU and about 14 MB of RAM.
 # Installation and usage
 
 1. Clone: `git clone https://github.com/BOOMfinity-Developers/GrOxyP`.
-2. Go to directory: `cd GrOxyP`.
+2. Go to directory: `cd GrOxyP/cmd/groxyp`.
 3. Build: `go build`.
 4. Copy `config.json.example` and rename to `config.json` and modify it (if you wish).
 5. Run!
