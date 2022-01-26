@@ -1,5 +1,6 @@
 {
   "databaseCode": "PX2LITEBIN",
   "databaseToken": "token_from_www.ip2location.com",
-  "databaseFilename": "IP2PROXY-LITE-PX2.BIN"
+  "databaseFilename": "IP2PROXY-LITE-PX2.BIN",
+  "webserverPort": 5656
 }

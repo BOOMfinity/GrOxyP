@@ -1,9 +1,9 @@
 package unzip
 
 import (
-	"archive/zip"
 	"errors"
 	"fmt"
+	"github.com/klauspost/compress/zip"
 	"io"
 	"os"
 	"path/filepath"
@@ -20,13 +20,12 @@ func Run(src string, dst string) error {
 
 	for _, f := range archive.File {
 		filePath := filepath.Join(dst, f.Name)
-		fmt.Println("unzipping file ", filePath)
+		fmt.Println(fmt.Sprintf("INFO: Unzipping %v", filePath))
 
 		if !strings.HasPrefix(filePath, filepath.Clean(dst)+string(os.PathSeparator)) {
 			return errors.New("invalid file path")
 		}
 		if f.FileInfo().IsDir() {
-			fmt.Println("creating directory...")
 			err := os.MkdirAll(filePath, os.ModePerm)
 			if err != nil {
 				return err
