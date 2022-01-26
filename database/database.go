@@ -1,10 +1,10 @@
 package database
 
 import (
-	"GrOxyP/config"
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/BOOMfinity-Developers/GrOxyP/config"
 	"io"
 	"net"
 	"net/http"

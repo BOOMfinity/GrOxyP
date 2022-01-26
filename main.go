@@ -1,10 +1,10 @@
 package main
 
 import (
-	"GrOxyP/config"
-	"GrOxyP/database"
-	"GrOxyP/webserver"
 	"fmt"
+	"github.com/BOOMfinity-Developers/GrOxyP/config"
+	"github.com/BOOMfinity-Developers/GrOxyP/database"
+	"github.com/BOOMfinity-Developers/GrOxyP/webserver"
 )
 
 func main() {

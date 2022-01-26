@@ -4,7 +4,7 @@ Check if IP is a VPN or proxy. Written in Go.
 
 ## Sources
 
-This app is using [X4BNet's list](https://github.com/X4BNet/lists_vpn) of IPs. GrOxyP checks, if queried IP is on this
+This app is using [X4BNet's list](https://github.com/X4BNet/lists_vpn) of IPs. GrOxyP checks if queried IP is on this
 list.
 
 Sources of code are mentioned in the comments.
