@@ -1,6 +1,7 @@
 package webserver
 
-type apiResponseIpType = struct {
+// apiResponseIP is a structure of /ip endpoint response
+type apiResponseIP = struct {
 	IP    string `json:"ip"`
 	Proxy bool   `json:"proxy"`
 	Rule  string `json:"rule"`

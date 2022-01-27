@@ -7,6 +7,7 @@ import (
 	"net/http"
 )
 
+// hello returns "OK" on every non-existing endpoint
 func hello(w http.ResponseWriter, _ *http.Request) {
 	_, err := fmt.Fprintf(w, "OK\n")
 	if err != nil {
@@ -15,12 +16,13 @@ func hello(w http.ResponseWriter, _ *http.Request) {
 	}
 }
 
+// ip returns queried IP, if queried IP is behind a proxy or VPN and which network has been blocked (reason/rule)
 func ip(w http.ResponseWriter, req *http.Request) {
-	//IP for testing: uk2345.nordvpn.com [194.35.232.123] - should be proxy
+	// IP for testing: uk2345.nordvpn.com [194.35.232.123] - should be proxy
 	ip := req.FormValue("q")
 	proxy, rule := database.SearchIPInDatabase(ip)
 	w.Header().Set("Content-Type", "application/json")
-	response := apiResponseIpType{
+	response := apiResponseIP{
 		IP:    ip,
 		Proxy: proxy,
 		Rule:  rule,
@@ -32,6 +34,9 @@ func ip(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+// Listen starts HTTP server for IP queries.
+// Available endpoints: /ip
+// Usage is in README
 func Listen(port uint16) error {
 	//Source: https://gobyexample.com/http-servers
 	http.HandleFunc("/", hello)
