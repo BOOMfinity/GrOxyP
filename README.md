@@ -4,7 +4,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp/badge)](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp)
 [![BCH compliance](https://bettercodehub.com/edge/badge/BOOMfinity-Developers/GrOxyP?branch=master)](https://bettercodehub.com/)
 
-Check if user is behind a VPN or proxy via simple HTTP request. Written in Go.
+Check if user is behind a VPN or proxy via simple HTTP request.
 
 ## Sources
 
