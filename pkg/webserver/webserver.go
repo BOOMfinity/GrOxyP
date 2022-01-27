@@ -1,9 +1,9 @@
 package webserver
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/BOOMfinity-Developers/GrOxyP/pkg/database"
+	"github.com/segmentio/encoding/json"
 	"net/http"
 )
 

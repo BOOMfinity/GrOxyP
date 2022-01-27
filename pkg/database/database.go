@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BOOMfinity-Developers/GrOxyP/pkg/config"
+	"github.com/yl2chen/cidranger"
 	"io"
 	"net"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 )
 
 var cfg = config.GetConfig()
-var nets []*net.IPNet
+var ranger = cidranger.NewPCTrieRanger()
 
 func UpdateDatabase(disableUpdate bool) error { //arg for debug
 	if disableUpdate {
@@ -56,7 +57,10 @@ func convertDatabase() error {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		if _, currNet, err := net.ParseCIDR(scanner.Text()); err == nil {
-			nets = append(nets, currNet)
+			err := ranger.Insert(cidranger.NewBasicRangerEntry(*currNet))
+			if err != nil {
+				fmt.Printf("Error while inserting CIDR to database: %v\n", err.Error())
+			}
 		}
 	}
 
@@ -67,11 +71,10 @@ func convertDatabase() error {
 }
 
 func SearchIPInDatabase(query string) (bool, string) {
-	q := net.ParseIP(query)
-	for _, currNet := range nets {
-		if currNet.Contains(q) {
-			return true, currNet.String()
-		}
+	if containingNetworks, err := ranger.ContainingNetworks(net.ParseIP(query)); len(containingNetworks) > 0 && err == nil {
+		network := containingNetworks[0].Network()
+		return true, network.String()
 	}
+
 	return false, ""
 }
