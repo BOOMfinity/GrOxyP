@@ -1,7 +1,10 @@
 # GrOxyP - Go Proxy
-[![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity-Developers/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity-Developers/GrOxyP)
 
-Check if IP is a VPN or proxy. Written in Go.
+[![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity-Developers/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity-Developers/GrOxyP)
+[![CodeFactor](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp/badge)](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp)
+[![BCH compliance](https://bettercodehub.com/edge/badge/BOOMfinity-Developers/GrOxyP?branch=master)](https://bettercodehub.com/)
+
+Check if user is behind a VPN or proxy via simple HTTP request. Written in Go.
 
 ## Sources
 
@@ -14,8 +17,9 @@ Sources of code are mentioned in the comments.
 
 Run on Windows 11, AMD Ryzen 7 3700X, 32GB RAM 3200MHz.
 
-- [go-wrk](https://github.com/tsliwowicz/go-wrk) benchmark
-    - 100 connections, 20 seconds:
+[go-wrk](https://github.com/tsliwowicz/go-wrk) benchmark:
+
+- 100 connections, 20 seconds:
 
 ```shell
 $ go-wrk -c 100 -d 20 http://localhost:5656/ip?q=194.35.232.123
