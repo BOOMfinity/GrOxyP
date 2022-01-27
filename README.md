@@ -1,4 +1,4 @@
-# GrOxyP - Go Proxy
+# GrOxyP - Go Proxy and VPN Checker
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity-Developers/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity-Developers/GrOxyP)
 [![CodeFactor](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp/badge)](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp)
