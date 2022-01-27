@@ -33,9 +33,8 @@ Avg Req Time:           4.430165ms
 Fastest Request:        0s
 Slowest Request:        32.7456ms
 Number of Errors:       0
+# Stats: ~50% CPU, ~20MB RAM
 ```
-
-About 50% of usage of CPU and about 20MB of RAM.
 
 - 1 connection, 20 seconds:
 
@@ -51,9 +50,8 @@ Avg Req Time:           235.447µs
 Fastest Request:        0s
 Slowest Request:        3.1675ms
 Number of Errors:       0
+# Stats: ~10% CPU, ~14MB RAM
 ```
-
-About 10% of usage of CPU and about 14 MB of RAM.
 
 # Installation and usage
 
