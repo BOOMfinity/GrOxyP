@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var cfg = config.GetConfig()
+var cfg = config.Get()
 
 // hello returns "OK" on every non-existing endpoint
 func hello(w http.ResponseWriter, _ *http.Request) {
@@ -31,9 +31,9 @@ func ip(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 	} else {
-		proxy, rule := database.SearchIPInDatabase(ip)
+		proxy, rule := database.FindIP(ip)
 		w.Header().Set("Content-Type", "application/json")
-		response := apiResponseIP{
+		response := ipEndpointResponse{
 			IP:    ip,
 			Proxy: proxy,
 			Rule:  rule,

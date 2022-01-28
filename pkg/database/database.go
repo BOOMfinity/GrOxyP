@@ -14,13 +14,13 @@ import (
 )
 
 // Getting config
-var cfg = config.GetConfig()
+var cfg = config.Get()
 
 // Defining CIDR checker to check, if given IP is included in given CIDR
 var ranger = cidranger.NewPCTrieRanger()
 
-// UpdateDatabase is for downloading database from GitHub to ips.txt and then storing it in memory
-func UpdateDatabase(disableUpdate bool) error {
+// Update is for downloading database from GitHub to ips.txt and then storing it in memory
+func Update(disableUpdate bool) error {
 	// If disableUpdate is true, application will NOT update its database. Useful for debug or offline mode
 	if disableUpdate {
 		return nil
@@ -45,18 +45,18 @@ func UpdateDatabase(disableUpdate bool) error {
 		return err
 	}
 	fmt.Println("INFO: Downloading done")
-	err = convertDatabase()
+	err = convert()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-// SetUpdateInterval is simple function to run UpdateDatabase at given interval
+// SetUpdateInterval is simple function to run Update at given interval
 func SetUpdateInterval(d time.Duration, disableUpdate bool) error {
 	for range time.Tick(d) {
 		fmt.Println("INFO: Database update started...")
-		err := UpdateDatabase(disableUpdate)
+		err := Update(disableUpdate)
 		if err != nil {
 			return err
 		}
@@ -65,8 +65,8 @@ func SetUpdateInterval(d time.Duration, disableUpdate bool) error {
 	return nil
 }
 
-// convertDatabase converts downloaded ips.txt file to networks in memory
-func convertDatabase() error {
+// convert converts (wow) downloaded ips.txt file to networks in memory
+func convert() error {
 	file, err := os.Open(cfg.DatabaseFilename)
 	if err != nil {
 		return err
@@ -89,8 +89,8 @@ func convertDatabase() error {
 	return nil
 }
 
-// SearchIPInDatabase checks if given IP is on the list. If so, returns "true" and reason.
-func SearchIPInDatabase(query string) (bool, string) {
+// FindIP checks if given IP is on the list. If so, returns "true" and reason.
+func FindIP(query string) (bool, string) {
 	if containingNetworks, err := ranger.ContainingNetworks(net.ParseIP(query)); len(containingNetworks) > 0 && err == nil {
 		network := containingNetworks[0].Network()
 		return true, network.String()

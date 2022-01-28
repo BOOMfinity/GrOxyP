@@ -6,8 +6,8 @@ import (
 	"os"
 )
 
-// GetConfig reads config.json file and returns parsed settings
-func GetConfig() Config {
+// Get reads config.json file and returns parsed settings
+func Get() Config {
 	//Source: https://github.com/MrBoombastic/GoProdukcji
 	file, err := os.Open("config.json")
 	if err != nil {

@@ -11,9 +11,9 @@ import (
 
 func main() {
 	// Getting config from config.json
-	var cfg = config.GetConfig()
+	var cfg = config.Get()
 	// Downloading fresh database immediately
-	err := database.UpdateDatabase(false)
+	err := database.Update(false)
 	if err != nil {
 		return
 	}
