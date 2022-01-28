@@ -2,10 +2,13 @@ package webserver
 
 import (
 	"fmt"
+	"github.com/BOOMfinity-Developers/GrOxyP/pkg/config"
 	"github.com/BOOMfinity-Developers/GrOxyP/pkg/database"
 	"github.com/segmentio/encoding/json"
 	"net/http"
 )
+
+var cfg = config.Get()
 
 // hello returns "OK" on every non-existing endpoint
 func hello(w http.ResponseWriter, _ *http.Request) {
@@ -20,23 +23,30 @@ func hello(w http.ResponseWriter, _ *http.Request) {
 func ip(w http.ResponseWriter, req *http.Request) {
 	// IP for testing: uk2345.nordvpn.com [194.35.232.123] - should be proxy
 	ip := req.FormValue("q")
-	proxy, rule := database.SearchIPInDatabase(ip)
-	w.Header().Set("Content-Type", "application/json")
-	response := apiResponseIP{
-		IP:    ip,
-		Proxy: proxy,
-		Rule:  rule,
-	}
-	err := json.NewEncoder(w).Encode(response)
-	if err != nil {
-		fmt.Println(err)
-		return
+	token := req.FormValue("token")
+	if token != cfg.Token {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, err := fmt.Fprintf(w, "401 Unauthorized")
+		if err != nil {
+			return
+		}
+	} else {
+		proxy, rule := database.FindIP(ip)
+		w.Header().Set("Content-Type", "application/json")
+		response := ipEndpointResponse{
+			IP:    ip,
+			Proxy: proxy,
+			Rule:  rule,
+		}
+		err := json.NewEncoder(w).Encode(response)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
 	}
 }
 
-// Listen starts HTTP server for IP queries.
-// Available endpoints: /ip
-// Usage is in README
+// Listen starts HTTP server for IP queries. Available endpoints: /ip. Usage is in README
 func Listen(port uint16) error {
 	//Source: https://gobyexample.com/http-servers
 	http.HandleFunc("/", hello)
