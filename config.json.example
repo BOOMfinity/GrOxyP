@@ -2,5 +2,6 @@
   "databaseDownloadURL": "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt",
   "databaseFilename": "ips.txt",
   "databaseUpdateInterval": "4h0m0s",
-  "webserverPort": 5656
+  "webserverPort": 5656,
+  "token": "such_a_secret_wow"
 }

@@ -64,8 +64,10 @@ Number of Errors:       0
 HTTP server will be ready for requests at default port 5656. Query endpoint `ip` like so:
 
 ```shell
-$ curl http://localhost:5656/ip?q=194.35.232.123
+$ curl http://localhost:5656/ip?q=194.35.232.123&token=such_a_token_wow
 {"ip":"194.35.232.123","proxy":true,"rule":"194.35.232.0/22"}
 ```
+
+Invalid token will give `401 Unathorized` message.
 
 Any other endpoint should respond with `OK` message.
