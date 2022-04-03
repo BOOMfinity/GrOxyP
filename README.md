@@ -15,7 +15,7 @@ Sources of code are mentioned in the comments.
 
 ## Benchmarks
 
-Run on Windows 11, AMD Ryzen 7 3700X, 32GB RAM 3200MHz.
+Ran on Windows 11, AMD Ryzen 7 3700X, 32GB RAM 3200MHz.
 
 [go-wrk](https://github.com/tsliwowicz/go-wrk) benchmark:
 
@@ -58,16 +58,14 @@ Number of Errors:       0
 1. Clone: `git clone https://github.com/BOOMfinity-Developers/GrOxyP`.
 2. Go to directory: `cd GrOxyP/cmd/groxyp`.
 3. Build: `go build`.
-4. Copy `config.json.example` and rename to `config.json` and modify it (if you wish).
+4. Copy `config.json.example`, rename it to `config.json` and modify it (if you wish).
 5. Run!
 
-HTTP server will be ready for requests at default port 5656. Query endpoint `ip` like so:
+HTTP server will be waiting for requests at default port 5656. Query `ip` endpoint like so:
 
 ```shell
 $ curl http://localhost:5656/ip?q=194.35.232.123&token=such_a_token_wow
 {"ip":"194.35.232.123","proxy":true,"rule":"194.35.232.0/22"}
 ```
 
-Invalid token will give `401 Unathorized` message.
-
-Any other endpoint should respond with `OK` message.
+Invalid token will cause `401 Unauthorized` messages. Other endpoints should respond with `OK` message.
