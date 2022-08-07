@@ -2,7 +2,7 @@ package webserver
 
 import (
 	"fmt"
-	"github.com/BOOMfinity-Developers/GrOxyP/pkg/database"
+	"github.com/BOOMfinity/GrOxyP/pkg/database"
 	"github.com/segmentio/encoding/json"
 	"net/http"
 	"os"
