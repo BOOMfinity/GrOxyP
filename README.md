@@ -58,7 +58,16 @@ Number of Errors:       0
 1. Clone: `git clone https://github.com/BOOMfinity-Developers/GrOxyP`.
 2. Go to directory: `cd GrOxyP/cmd/groxyp`.
 3. Build: `go build`.
-4. Copy `config.json.example`, rename it to `config.json` and modify it (if you wish).
+4. Set environmental variables as in example:
+
+```shell
+  GROXYP_DB_URL = "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt"
+  GROXYP_DB_FILE = "ips.txt"
+  GROXYP_DB_UPDATE_INTERVAL = "4h0m0s"
+  GROXYP_PORT = 5656,
+  GROXYP_TOKEN: = "such_a_token_wow"
+```
+
 5. Run!
 
 HTTP server will be waiting for requests at default port 5656. Query `ip` endpoint like so:
@@ -68,4 +77,4 @@ $ curl http://localhost:5656/ip?q=194.35.232.123&token=such_a_token_wow
 {"ip":"194.35.232.123","proxy":true,"rule":"194.35.232.0/22"}
 ```
 
-Invalid token will cause `401 Unauthorized` messages. Other endpoints should respond with `OK` message.
+Invalid token will cause `401 Unauthorized` messages. Other endpoints should respond with `404` message.

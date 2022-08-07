@@ -1,24 +1,16 @@
 package config
 
 import (
-	"encoding/json"
-	"fmt"
 	"os"
 )
 
-// Get reads config.json file and returns parsed settings
+// Get reads environmental variables and returns them as Config
 func Get() Config {
-	//Source: https://github.com/MrBoombastic/GoProdukcji
-	file, err := os.Open("config.json")
-	if err != nil {
-		fmt.Println(err)
+	return Config{
+		DatabaseFilename:       os.Getenv("GROXYP_DB_FILE"),
+		DatabaseDownloadURL:    os.Getenv("GROXYP_DB_URL"),
+		DatabaseUpdateInterval: os.Getenv("GROXYP_DB_UPDATE_INTERVAL"),
+		WebserverPort:          os.Getenv("GROXYP_PORT"),
+		Token:                  os.Getenv("GROXYP_TOKEN"),
 	}
-	defer file.Close()
-	decoder := json.NewDecoder(file)
-	configuration := Config{}
-	err = decoder.Decode(&configuration)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return configuration
 }

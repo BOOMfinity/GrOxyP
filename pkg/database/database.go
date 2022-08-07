@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"github.com/BOOMfinity-Developers/GrOxyP/pkg/config"
 	"github.com/yl2chen/cidranger"
 	"io"
 	"net"
@@ -13,18 +12,11 @@ import (
 	"time"
 )
 
-// Getting config
-var cfg = config.Get()
-
 // Defining CIDR checker to check, if given IP is included in given CIDR
 var ranger = cidranger.NewPCTrieRanger()
 
 // Update is for downloading database from GitHub to ips.txt and then storing it in memory
-func Update(disableUpdate bool) error {
-	// If disableUpdate is true, application will NOT update its database. Useful for debug or offline mode
-	if disableUpdate {
-		return nil
-	}
+func Update() error {
 	// Source: https://golang.cafe/blog/golang-unzip-file-example.html
 	fmt.Println("INFO: Downloading database...")
 	response, err := http.Get("https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt")
@@ -35,7 +27,7 @@ func Update(disableUpdate bool) error {
 	if response.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("received code %v while downloading database", response.StatusCode))
 	}
-	file, err := os.Create(cfg.DatabaseFilename)
+	file, err := os.Create(os.Getenv("GROXYP_DB_FILE"))
 	if err != nil {
 		return err
 	}
@@ -53,10 +45,10 @@ func Update(disableUpdate bool) error {
 }
 
 // SetUpdateInterval is simple function to run Update at given interval
-func SetUpdateInterval(d time.Duration, disableUpdate bool) error {
+func SetUpdateInterval(d time.Duration) error {
 	for range time.Tick(d) {
 		fmt.Println("INFO: Database update started...")
-		err := Update(disableUpdate)
+		err := Update()
 		if err != nil {
 			return err
 		}
@@ -67,7 +59,7 @@ func SetUpdateInterval(d time.Duration, disableUpdate bool) error {
 
 // convert converts (wow) downloaded ips.txt file to networks in memory
 func convert() error {
-	file, err := os.Open(cfg.DatabaseFilename)
+	file, err := os.Open(os.Getenv("GROXYP_DB_FILE"))
 	if err != nil {
 		return err
 	}

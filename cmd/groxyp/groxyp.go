@@ -13,7 +13,7 @@ func main() {
 	// Getting config from config.json
 	var cfg = config.Get()
 	// Downloading fresh database immediately
-	err := database.Update(false)
+	err := database.Update()
 	if err != nil {
 		return
 	}
@@ -25,7 +25,7 @@ func main() {
 			log.Fatal(err)
 		}
 		// Starting interval
-		err = database.SetUpdateInterval(interval, false)
+		err = database.SetUpdateInterval(interval)
 		if err != nil {
 			fmt.Println(err)
 		}
