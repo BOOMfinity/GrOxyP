@@ -1,4 +1,4 @@
-module github.com/BOOMfinity-Developers/GrOxyP
+module github.com/BOOMfinity/GrOxyP
 
 go 1.18
 

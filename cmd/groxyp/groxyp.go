@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/BOOMfinity-Developers/GrOxyP/pkg/config"
-	"github.com/BOOMfinity-Developers/GrOxyP/pkg/database"
-	"github.com/BOOMfinity-Developers/GrOxyP/pkg/webserver"
+	"github.com/BOOMfinity/GrOxyP/pkg/config"
+	"github.com/BOOMfinity/GrOxyP/pkg/database"
+	"github.com/BOOMfinity/GrOxyP/pkg/webserver"
 	"log"
 	"time"
 )

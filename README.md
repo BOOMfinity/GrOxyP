@@ -1,8 +1,8 @@
 # GrOxyP - Go Proxy and VPN Checker
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity-Developers/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity-Developers/GrOxyP)
-[![CodeFactor](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp/badge)](https://www.codefactor.io/repository/github/boomfinity-developers/groxyp)
-[![BCH compliance](https://bettercodehub.com/edge/badge/BOOMfinity-Developers/GrOxyP?branch=master)](https://bettercodehub.com/)
+[![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity/GrOxyP)
+[![CodeFactor](https://www.codefactor.io/repository/github/boomfinity/groxyp/badge)](https://www.codefactor.io/repository/github/boomfinity/groxyp)
+[![BCH compliance](https://bettercodehub.com/edge/badge/BOOMfinity/GrOxyP?branch=master)](https://bettercodehub.com/)
 
 Check if user is behind a VPN or proxy via simple HTTP request.
 
@@ -55,7 +55,7 @@ Number of Errors:       0
 
 # Installation and usage
 
-1. Clone: `git clone https://github.com/BOOMfinity-Developers/GrOxyP`.
+1. Clone: `git clone https://github.com/BOOMfinity/GrOxyP`.
 2. Go to directory: `cd GrOxyP/cmd/groxyp`.
 3. Build: `go build`.
 4. Set environmental variables as in example:
