@@ -3,7 +3,7 @@ module github.com/BOOMfinity/GrOxyP
 go 1.18
 
 require (
-	github.com/segmentio/encoding v0.3.5
+	github.com/segmentio/encoding v0.3.6
 	github.com/yl2chen/cidranger v1.0.2
 )
 
