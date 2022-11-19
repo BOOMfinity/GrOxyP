@@ -78,3 +78,8 @@ $ curl http://localhost:5656/ip?q=194.35.232.123&token=such_a_token_wow
 ```
 
 Invalid token will cause `401 Unauthorized` messages. Other endpoints should respond with `404` message.
+
+# Discord support server
+Because why not?
+
+[![Discord Widget](https://discordapp.com/api/guilds/1036320104486547466/widget.png?style=banner4)](https://labs.boomfinity.xyz)
