@@ -7,9 +7,6 @@ import (
 
 // Get reads environmental variables
 func Get() (Config, error) {
-	if os.Getenv("GROXYP_DB_FILE") == "" {
-		return Config{}, fmt.Errorf("GROXYP_DB_FILE is not set")
-	}
 	if os.Getenv("GROXYP_DB_URL") == "" {
 		return Config{}, fmt.Errorf("GROXYP_DB_URL is not set")
 	}
@@ -23,18 +20,18 @@ func Get() (Config, error) {
 		return Config{}, fmt.Errorf("GROXYP_TOKEN is not set")
 	}
 	return Config{
-		DatabaseFilename:       os.Getenv("GROXYP_DB_FILE"),
 		DatabaseDownloadURL:    os.Getenv("GROXYP_DB_URL"),
 		DatabaseUpdateInterval: os.Getenv("GROXYP_DB_UPDATE_INTERVAL"),
 		WebserverPort:          os.Getenv("GROXYP_PORT"),
+		Debug:                  os.Getenv("GROXYP_DEBUG") == "true",
 		Token:                  os.Getenv("GROXYP_TOKEN")}, nil
 }
 
 // Config is a structure of environmental variables
 type Config struct {
-	DatabaseFilename       string
 	DatabaseDownloadURL    string
 	DatabaseUpdateInterval string
 	WebserverPort          string
 	Token                  string
+	Debug                  bool
 }

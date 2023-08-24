@@ -59,12 +59,12 @@ Number of Errors:       0
 3. Build: `go build`.
 4. Set environmental variables as in example:
 
-```shell
+```sh
   GROXYP_DB_URL = "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt"
-  GROXYP_DB_FILE = "ips.txt"
   GROXYP_DB_UPDATE_INTERVAL = "4h0m0s"
   GROXYP_PORT = 5656,
-  GROXYP_TOKEN: = "such_a_token_wow"
+  GROXYP_TOKEN = "such_a_token_wow"
+  GROXYP_DEBUG = false
 ```
 
 5. Run!

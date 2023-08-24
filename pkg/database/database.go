@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"github.com/BOOMfinity/GrOxyP/pkg/config"
 	"github.com/yl2chen/cidranger"
-	"io"
 	"log"
 	"net"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -20,7 +18,9 @@ var ranger = cidranger.NewPCTrieRanger()
 // Update is for downloading database from GitHub to ips.txt and then storing it in memory
 func Update(conf *config.Config) error {
 	// Source: https://golang.cafe/blog/golang-unzip-file-example.html
-	fmt.Println("INFO: Downloading database...")
+	if conf.Debug {
+		fmt.Println("INFO: Downloading database...")
+	}
 	response, err := http.Get(conf.DatabaseDownloadURL)
 	if err != nil {
 		return err
@@ -29,18 +29,22 @@ func Update(conf *config.Config) error {
 	if response.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("received code %v while downloading database", response.StatusCode))
 	}
-	file, err := os.Create(conf.DatabaseFilename)
-	if err != nil {
-		return err
+	if conf.Debug {
+		fmt.Println("INFO: Database downloaded. Parsing...")
 	}
-	defer file.Close()
-	_, err = io.Copy(file, response.Body)
-	if err != nil {
-		return err
+	scanner := bufio.NewScanner(response.Body)
+	for scanner.Scan() {
+		if _, currNet, err := net.ParseCIDR(scanner.Text()); err == nil {
+			err := ranger.Insert(cidranger.NewBasicRangerEntry(*currNet))
+			if err != nil {
+				fmt.Printf("Error while inserting CIDR to database: %v\n", err.Error())
+			}
+		}
 	}
-	fmt.Println("INFO: Downloading done")
-	err = convert(*conf)
-	if err != nil {
+	if conf.Debug {
+		fmt.Printf("INFO: Database parsed. %v entries.\n", ranger.Len())
+	}
+	if err := scanner.Err(); err != nil {
 		return err
 	}
 	return nil
@@ -53,36 +57,16 @@ func SetUpdateInterval(conf *config.Config) error {
 		log.Fatal(err)
 	}
 	for range time.Tick(interval) {
-		fmt.Println("INFO: Database update started...")
+		if conf.Debug {
+			fmt.Println("INFO: Database update started...")
+		}
 		err := Update(conf)
 		if err != nil {
 			return err
 		}
-		fmt.Println("INFO: Database update done")
-	}
-	return nil
-}
-
-// convert converts (wow) downloaded ips.txt file to networks in memory
-func convert(conf config.Config) error {
-	file, err := os.Open(conf.DatabaseFilename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		if _, currNet, err := net.ParseCIDR(scanner.Text()); err == nil {
-			err := ranger.Insert(cidranger.NewBasicRangerEntry(*currNet))
-			if err != nil {
-				fmt.Printf("Error while inserting CIDR to database: %v\n", err.Error())
-			}
+		if conf.Debug {
+			fmt.Println("INFO: Database update done")
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		return err
 	}
 	return nil
 }
