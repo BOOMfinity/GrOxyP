@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"github.com/BOOMfinity/GrOxyP/pkg/config"
 	"github.com/yl2chen/cidranger"
 	"io"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -16,10 +18,10 @@ import (
 var ranger = cidranger.NewPCTrieRanger()
 
 // Update is for downloading database from GitHub to ips.txt and then storing it in memory
-func Update() error {
+func Update(conf *config.Config) error {
 	// Source: https://golang.cafe/blog/golang-unzip-file-example.html
 	fmt.Println("INFO: Downloading database...")
-	response, err := http.Get("https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt")
+	response, err := http.Get(conf.DatabaseDownloadURL)
 	if err != nil {
 		return err
 	}
@@ -27,7 +29,7 @@ func Update() error {
 	if response.StatusCode != 200 {
 		return errors.New(fmt.Sprintf("received code %v while downloading database", response.StatusCode))
 	}
-	file, err := os.Create(os.Getenv("GROXYP_DB_FILE"))
+	file, err := os.Create(conf.DatabaseFilename)
 	if err != nil {
 		return err
 	}
@@ -37,7 +39,7 @@ func Update() error {
 		return err
 	}
 	fmt.Println("INFO: Downloading done")
-	err = convert()
+	err = convert(*conf)
 	if err != nil {
 		return err
 	}
@@ -45,10 +47,14 @@ func Update() error {
 }
 
 // SetUpdateInterval is simple function to run Update at given interval
-func SetUpdateInterval(d time.Duration) error {
-	for range time.Tick(d) {
+func SetUpdateInterval(conf *config.Config) error {
+	interval, err := time.ParseDuration(conf.DatabaseUpdateInterval)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for range time.Tick(interval) {
 		fmt.Println("INFO: Database update started...")
-		err := Update()
+		err := Update(conf)
 		if err != nil {
 			return err
 		}
@@ -58,8 +64,8 @@ func SetUpdateInterval(d time.Duration) error {
 }
 
 // convert converts (wow) downloaded ips.txt file to networks in memory
-func convert() error {
-	file, err := os.Open(os.Getenv("GROXYP_DB_FILE"))
+func convert(conf config.Config) error {
+	file, err := os.Open(conf.DatabaseFilename)
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,6 @@
 module github.com/BOOMfinity/GrOxyP
 
-go 1.18
+go 1.21
 
 require (
 	github.com/segmentio/encoding v0.3.6

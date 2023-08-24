@@ -5,33 +5,30 @@ import (
 	"github.com/BOOMfinity/GrOxyP/pkg/config"
 	"github.com/BOOMfinity/GrOxyP/pkg/database"
 	"github.com/BOOMfinity/GrOxyP/pkg/webserver"
-	"log"
-	"time"
 )
 
 func main() {
-	// Getting config from config.json
-	var cfg = config.Get()
-	// Downloading fresh database immediately
-	err := database.Update()
+	// Check envs
+	conf, err := config.Get()
 	if err != nil {
+		panic(err)
+	}
+	// Downloading fresh database immediately
+	err = database.Update(&conf)
+	if err != nil {
+		panic(err)
 		return
 	}
 	// Updating database "in background" at given interval
 	go func() {
-		// Parsing duration
-		interval, err := time.ParseDuration(cfg.DatabaseUpdateInterval)
-		if err != nil {
-			log.Fatal(err)
-		}
 		// Starting interval
-		err = database.SetUpdateInterval(interval)
+		err = database.SetUpdateInterval(&conf)
 		if err != nil {
 			fmt.Println(err)
 		}
 	}()
 	// Starting webserver to listen HTTP queries
-	err = webserver.Listen(cfg.WebserverPort)
+	err = webserver.Listen(conf.WebserverPort)
 	if err != nil {
 		fmt.Println(err)
 		return

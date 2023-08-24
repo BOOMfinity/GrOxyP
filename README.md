@@ -2,7 +2,6 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/BOOMfinity/GrOxyP.svg)](https://pkg.go.dev/github.com/BOOMfinity/GrOxyP)
 [![CodeFactor](https://www.codefactor.io/repository/github/boomfinity/groxyp/badge)](https://www.codefactor.io/repository/github/boomfinity/groxyp)
-[![BCH compliance](https://bettercodehub.com/edge/badge/BOOMfinity/GrOxyP?branch=master)](https://bettercodehub.com/)
 
 Check if user is behind a VPN or proxy via simple HTTP request.
 
@@ -61,7 +60,7 @@ Number of Errors:       0
 4. Set environmental variables as in example:
 
 ```shell
-  GROXYP_DB_URL = "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/ipv4.txt"
+  GROXYP_DB_URL = "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt"
   GROXYP_DB_FILE = "ips.txt"
   GROXYP_DB_UPDATE_INTERVAL = "4h0m0s"
   GROXYP_PORT = 5656,
