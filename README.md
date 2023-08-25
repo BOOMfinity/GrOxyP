@@ -74,7 +74,7 @@ Number of Errors:       0
 
 > [!IMPORTANT]
 > Always refer to [X4BNet's repo](https://github.com/X4BNet/lists_vpn) for more information about IP lists. You might
-> want to replace "datacenter" with "vpn" in the example above.
+> want to replace `datacenter` with `vpn` in the example above.
 
 5. Run!
 
@@ -85,7 +85,7 @@ $ curl http://localhost:5656/ip?q=194.35.232.123&token=such_a_token_wow
 {"ip":"194.35.232.123","proxy":true,"rule":"194.35.232.0/22"}
 ```
 
-Invalid token will cause `401 Unauthorized` messages. Other endpoints should respond with `404` message.
+Invalid token will cause `401 Unauthorized` messages. Other endpoints will respond with `404` message.
 
 ## Programmatically
 
