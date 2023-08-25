@@ -2,38 +2,44 @@ package main
 
 import (
 	"fmt"
-	"github.com/BOOMfinity/GrOxyP/pkg/config"
-	"github.com/BOOMfinity/GrOxyP/pkg/database"
-	"github.com/BOOMfinity/GrOxyP/pkg/webserver"
-	"log"
-	"time"
+	"github.com/BOOMfinity/GrOxyP/pkg/client"
+	"os"
 )
 
-func main() {
-	// Getting config from config.json
-	var cfg = config.Get()
-	// Downloading fresh database immediately
-	err := database.Update()
-	if err != nil {
-		return
+// getConfig reads environmental variables
+func getConfig() (client.Config, error) {
+	if os.Getenv("GROXYP_DB_URL") == "" {
+		return client.Config{}, fmt.Errorf("GROXYP_DB_URL is not set")
 	}
-	// Updating database "in background" at given interval
-	go func() {
-		// Parsing duration
-		interval, err := time.ParseDuration(cfg.DatabaseUpdateInterval)
-		if err != nil {
-			log.Fatal(err)
-		}
-		// Starting interval
-		err = database.SetUpdateInterval(interval)
-		if err != nil {
-			fmt.Println(err)
-		}
-	}()
-	// Starting webserver to listen HTTP queries
-	err = webserver.Listen(cfg.WebserverPort)
+	if os.Getenv("GROXYP_PORT") == "" {
+		return client.Config{}, fmt.Errorf("GROXYP_PORT is not set")
+	}
+	if os.Getenv("GROXYP_TOKEN") == "" {
+		return client.Config{}, fmt.Errorf("GROXYP_TOKEN is not set")
+	}
+	return client.Config{
+		DatabaseDownloadURL:    os.Getenv("GROXYP_DB_URL"),
+		DatabaseUpdateInterval: os.Getenv("GROXYP_DB_UPDATE_INTERVAL"),
+		WebserverPort:          os.Getenv("GROXYP_PORT"),
+		Debug:                  os.Getenv("GROXYP_DEBUG") == "true",
+		WebserverToken:         os.Getenv("GROXYP_TOKEN")}, nil
+}
+
+func main() {
+	// Check envs
+	conf, err := getConfig()
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
+	}
+	// Spinning up new client
+	c, err := client.NewClient(conf)
+	if err != nil {
+		panic(err)
+	}
+	// Starting webserver to listen HTTP queries
+	err = c.StartServer()
+	if err != nil {
+		panic(err)
 		return
 	}
 }
