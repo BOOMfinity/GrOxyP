@@ -14,43 +14,45 @@ Sources of code are mentioned in the comments.
 
 ## Benchmarks
 
-Ran on Windows 11, AMD Ryzen 7 3700X, 32GB RAM 3200MHz.
+Ran on Windows 11 22631.2262, AMD Ryzen 7 3700X, 32GB RAM 3200MHz, Go 1.21.
 
 [go-wrk](https://github.com/tsliwowicz/go-wrk) benchmark:
 
 - 100 connections, 20 seconds:
 
 ```shell
-$ go-wrk -c 100 -d 20 http://localhost:5656/ip?q=194.35.232.123
+$ go-wrk -c 100 -d 20 "http://localhost:5656/ip?q=194.35.232.123&token=token"
 
-Running 20s test @ http://localhost:5656/ip?q=194.35.232.123
+Running 20s test @ http://localhost:5656/ip?q=194.35.232.123&token=token
   100 goroutine(s) running concurrently
-574077 requests in 17.079976921s, 83.76MB read
-Requests/sec:           33611.11
-Transfer/sec:           4.90MB
-Avg Req Time:           2.975206ms
+1356936 requests in 18.422209262s, 197.99MB read
+Requests/sec:           73657.62
+Transfer/sec:           10.75MB
+Avg Req Time:           1.357632ms
 Fastest Request:        0s
-Slowest Request:        32.4233ms
+Slowest Request:        18.6332ms
 Number of Errors:       0
-# Stats: ~20% CPU, ~50MB RAM
 ```
+
+Stats (Task Manager, eyeballing): ~30% CPU, ~40MB RAM
 
 - 1 connection, 20 seconds:
 
 ```shell
-$ go-wrk -c 1 -d 20 http://localhost:5656/ip?q=194.35.232.123
+$ go-wrk -c 1 -d 20 "http://localhost:5656/ip?q=194.35.232.123&token=token"
 
-Running 20s test @ http://localhost:5656/ip?q=194.35.232.123
+Running 20s test @ http://localhost:5656/ip?q=194.35.232.123&token=token
   1 goroutine(s) running concurrently
-283966 requests in 18.9446991s, 41.43MB read
-Requests/sec:           14989.21
-Transfer/sec:           2.19MB
-Avg Req Time:           66.714µs
+243087 requests in 19.0139044s, 35.47MB read
+Requests/sec:           12784.70
+Transfer/sec:           1.87MB
+Avg Req Time:           78.218µs
 Fastest Request:        0s
-Slowest Request:        3.641ms
+Slowest Request:        4.6746ms
 Number of Errors:       0
-# Stats: ~10% CPU, ~38MB RAM
 ```
+
+Stats (Task Manager, eyeballing): ~11% CPU, ~38MB RAM
 
 # Installation and usage
 
