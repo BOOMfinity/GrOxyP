@@ -42,10 +42,7 @@ func (c *Client) Update() (err error) {
 	if c.Conf.Debug {
 		fmt.Printf("INFO: Database parsed. %v entries.\n", c.Database.Len())
 	}
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-	return nil
+	return scanner.Err()
 }
 
 // runAutoUpdates is simple function to run Update at set interval
