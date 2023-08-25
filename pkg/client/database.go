@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// Update will flush and repopulate database with freshly downloaded list.
 func (c *Client) Update() (err error) {
 	if c.Conf.Debug {
 		fmt.Println("INFO: Downloading database...")
@@ -25,6 +26,10 @@ func (c *Client) Update() (err error) {
 	if c.Conf.Debug {
 		fmt.Println("INFO: Database downloaded. Parsing...")
 	}
+	// Flushing entries
+	c.Database = cidranger.NewPCTrieRanger()
+
+	// Importing
 	scanner := bufio.NewScanner(response.Body)
 	for scanner.Scan() {
 		if _, currNet, err := net.ParseCIDR(scanner.Text()); err == nil {

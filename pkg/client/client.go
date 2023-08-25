@@ -23,7 +23,7 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-// NewClient creates new client with given config and immediately updates its database. It will also run automatic updates, if interval is specified.
+// NewClient creates new client with the given config and immediately updates its database. It will also run automatic updates, if interval is specified.
 func NewClient(conf Config) (client *Client, err error) {
 	client = &Client{
 		Conf:       conf,
@@ -45,7 +45,7 @@ func NewClient(conf Config) (client *Client, err error) {
 	return client, nil
 }
 
-// FindIP checks if given IP is on the list. If so, returns "true" and reason.
+// FindIP checks if a given IP is on the list. If so, returns `true` and the reason (IP block).
 func (c *Client) FindIP(query net.IP) (bool, string) {
 	if containingNetworks, err := c.Database.ContainingNetworks(query); len(containingNetworks) > 0 && err == nil {
 		network := containingNetworks[0].Network()

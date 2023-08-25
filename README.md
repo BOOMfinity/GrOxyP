@@ -54,6 +54,8 @@ Number of Errors:       0
 
 # Installation and usage
 
+## As a server
+
 1. Clone: `git clone https://github.com/BOOMfinity/GrOxyP`.
 2. Go to directory: `cd GrOxyP/cmd/groxyp`.
 3. Build: `go build`.
@@ -67,6 +69,13 @@ Number of Errors:       0
   GROXYP_DEBUG = false
 ```
 
+> [!NOTE]
+> Port and token are only needed, when you want to spin up an HTTP server.
+
+> [!IMPORTANT]
+> Always refer to [X4BNet's repo](https://github.com/X4BNet/lists_vpn) for more information about IP lists. You might
+> want to replace "datacenter" with "vpn" in the example above.
+
 5. Run!
 
 HTTP server will be waiting for requests at default port 5656. Query `ip` endpoint like so:
@@ -78,7 +87,32 @@ $ curl http://localhost:5656/ip?q=194.35.232.123&token=such_a_token_wow
 
 Invalid token will cause `401 Unauthorized` messages. Other endpoints should respond with `404` message.
 
+## Programmatically
+
+Use example code below:
+
+```go
+package main
+
+import (
+	"fmt"
+	groxyp "github.com/BOOMfinity/GrOxyP/pkg/client"
+	"net"
+)
+
+var ipChecker, _ = groxyp.NewClient(groxyp.Config{
+	DatabaseDownloadURL:    "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt",
+	DatabaseUpdateInterval: "8h0m0s",
+})
+
+func main() {
+	found, reason := ipChecker.FindIP(net.ParseIP("8.8.8.8"))
+	fmt.Printf("IP found in the list: %v. IP block: %v", found, reason)
+}
+```
+
 # Discord support server
+
 Because why not?
 
 [![Discord Widget](https://discordapp.com/api/guilds/1036320104486547466/widget.png?style=banner4)](https://labs.boomfinity.xyz)
