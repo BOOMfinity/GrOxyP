@@ -1,9 +1,11 @@
 package client
 
 import (
+	"fmt"
 	"github.com/yl2chen/cidranger"
 	"net"
 	"net/http"
+	"os"
 )
 
 // Config is a structure of environmental variables
@@ -21,7 +23,7 @@ type Client struct {
 	HTTPClient *http.Client
 }
 
-// NewClient creates new client with given config and immediately updates its database.
+// NewClient creates new client with given config and immediately updates its database. It will also run automatic updates, if interval is specified.
 func NewClient(conf Config) (client *Client, err error) {
 	client = &Client{
 		Conf:       conf,
@@ -31,6 +33,14 @@ func NewClient(conf Config) (client *Client, err error) {
 	err = client.Update()
 	if err != nil {
 		return &Client{}, err
+	}
+	if client.Conf.DatabaseUpdateInterval != "" {
+		go func() {
+			err = client.runAutoUpdates()
+			if err != nil {
+				_, _ = fmt.Fprintln(os.Stderr, "GrOxyP auto-update error:", err)
+			}
+		}()
 	}
 	return client, nil
 }

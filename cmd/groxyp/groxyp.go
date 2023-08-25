@@ -4,16 +4,12 @@ import (
 	"fmt"
 	"github.com/BOOMfinity/GrOxyP/pkg/client"
 	"os"
-	"time"
 )
 
 // getConfig reads environmental variables
 func getConfig() (client.Config, error) {
 	if os.Getenv("GROXYP_DB_URL") == "" {
 		return client.Config{}, fmt.Errorf("GROXYP_DB_URL is not set")
-	}
-	if os.Getenv("GROXYP_DB_UPDATE_INTERVAL") == "" {
-		return client.Config{}, fmt.Errorf("GROXYP_DB_UPDATE_INTERVAL is not set")
 	}
 	if os.Getenv("GROXYP_PORT") == "" {
 		return client.Config{}, fmt.Errorf("GROXYP_PORT is not set")
@@ -40,23 +36,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// Updating database "in background" at given interval
-	go func() {
-		// Starting interval
-		interval, err := time.ParseDuration(c.Conf.DatabaseUpdateInterval)
-		if err != nil {
-			panic(err)
-		}
-		time.Sleep(interval)
-		err = c.Update()
-		if err != nil {
-			fmt.Println(err)
-		}
-	}()
 	// Starting webserver to listen HTTP queries
 	err = c.StartServer()
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 		return
 	}
 }

@@ -43,8 +43,8 @@ func (c *Client) Update() (err error) {
 	return nil
 }
 
-// SetUpdateInterval is simple function to run Update at given interval
-func (c *Client) SetUpdateInterval() error {
+// runAutoUpdates is simple function to run Update at set interval
+func (c *Client) runAutoUpdates() error {
 	interval, err := time.ParseDuration(c.Conf.DatabaseUpdateInterval)
 	if err != nil {
 		log.Fatal(err)
