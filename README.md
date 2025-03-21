@@ -7,10 +7,8 @@ Check if user is behind a VPN or proxy via simple HTTP request.
 
 ## Sources
 
-This app is using [X4BNet's list](https://github.com/X4BNet/lists_vpn) of IPs. GrOxyP checks if queried IP is on this
-list.
-
-Sources of code are mentioned in the comments.
+This app is using [X4BNet's list](https://github.com/X4BNet/lists_vpn) of IPs by design.
+GrOxyP checks if queried IP is on list provided by the user.
 
 ## Benchmarks
 
@@ -36,7 +34,7 @@ Number of Errors:       0
 
 Stats (Task Manager, eyeballing): ~30% CPU, ~40MB RAM
 
-- 1 connection, 20 seconds:
+- Single connection, 20 seconds:
 
 ```shell
 $ go-wrk -c 1 -d 20 "http://localhost:5656/ip?q=194.35.232.123&token=token"
@@ -72,7 +70,7 @@ Stats (Task Manager, eyeballing): ~11% CPU, ~38MB RAM
 ```
 
 > [!NOTE]
-> Port and token are only needed, when you want to spin up an HTTP server.
+> Port and token are only needed when you want to spin up an HTTP server.
 
 > [!IMPORTANT]
 > Always refer to [X4BNet's repo](https://github.com/X4BNet/lists_vpn) for more information about IP lists. You might
@@ -100,17 +98,19 @@ import (
 	"fmt"
 	groxyp "github.com/BOOMfinity/GrOxyP/pkg/client"
 	"net"
+	"time"
 )
 
 var ipChecker, _ = groxyp.NewClient(groxyp.Config{
-	DatabaseDownloadURL:    "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt",
-	DatabaseUpdateInterval: "8h0m0s",
+	DatabaseDownloadURL: groxyp.X4BNetVPNIPv4ListURL, // or groxyp.X4BNetDatacenterIPv4ListURL, or any other URL to the compatible list
+	DatabaseUpdateInterval: time.Hour * 8,
 })
 
 func main() {
-	found, reason := ipChecker.FindIP(net.ParseIP("8.8.8.8"))
-	fmt.Printf("IP found in the list: %v. IP block: %v", found, reason)
+	isFound, network := ipChecker.FindIP(net.ParseIP("8.8.8.8"))
+	fmt.Printf("IP found in the list: %v. IP network: %v", isFound, network.String())
 }
+
 ```
 
 # Discord support server
