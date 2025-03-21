@@ -100,17 +100,19 @@ import (
 	"fmt"
 	groxyp "github.com/BOOMfinity/GrOxyP/pkg/client"
 	"net"
+	"time"
 )
 
 var ipChecker, _ = groxyp.NewClient(groxyp.Config{
-	DatabaseDownloadURL:    "https://raw.githubusercontent.com/X4BNet/lists_vpn/main/output/datacenter/ipv4.txt",
-	DatabaseUpdateInterval: "8h0m0s",
+	DatabaseDownloadURL:    groxyp.X4BNetDatacenterIPv4ListURL, // or groxyp.X4BNetVPNIPv4ListURL, or any other with compatible format
+	DatabaseUpdateInterval: time.Hour * 8,
 })
 
 func main() {
-	found, reason := ipChecker.FindIP(net.ParseIP("8.8.8.8"))
-	fmt.Printf("IP found in the list: %v. IP block: %v", found, reason)
+	isFound, network := ipChecker.FindIP(net.ParseIP("8.8.8.8"))
+	fmt.Printf("IP found in the list: %v. IP network: %v", isFound, network.String())
 }
+
 ```
 
 # Discord support server
