@@ -46,10 +46,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer c.Close()
 	// Starting webserver to listen to HTTP queries
 	err = c.StartServer()
 	if err != nil {
 		panic(err)
-		return
 	}
 }

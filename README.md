@@ -101,17 +101,27 @@ import (
 	"time"
 )
 
-var ipChecker, _ = groxyp.NewClient(groxyp.Config{
-	DatabaseDownloadURL: groxyp.X4BNetVPNIPv4ListURL, // or groxyp.X4BNetDatacenterIPv4ListURL, or any other URL to the compatible list
-	DatabaseUpdateInterval: time.Hour * 8,
-})
-
 func main() {
+	ipChecker, err := groxyp.NewClient(groxyp.Config{
+		DatabaseDownloadURL: groxyp.X4BNetVPNIPv4ListURL, // or groxyp.X4BNetDatacenterIPv4ListURL, or any other URL to the compatible list
+		DatabaseUpdateInterval: time.Hour * 8,
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer ipChecker.Close()
 	isFound, network := ipChecker.FindIP(net.ParseIP("8.8.8.8"))
 	fmt.Printf("IP found in the list: %v. IP network: %v", isFound, network.String())
 }
 
 ```
+
+Downloads have a 30-second timeout. Automatic updates are disabled when the interval
+is zero; negative intervals are rejected. An unsuccessful refresh keeps the previous
+database and retries at the next configured interval. Blank lines and `#` comments
+are allowed, but invalid CIDRs and empty lists are rejected. Use `FindIP` for lookups
+while updates are running; directly accessing the exported `Database` field is not
+synchronized. Call `Close` when the client is no longer needed.
 
 # Discord support server
 
