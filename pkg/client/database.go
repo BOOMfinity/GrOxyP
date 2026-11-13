@@ -7,10 +7,11 @@ import (
 	"github.com/yl2chen/cidranger"
 	"log"
 	"net"
+	"strings"
 	"time"
 )
 
-// Update will flush and repopulate the database with freshly downloaded list.
+// Update replaces the database only after the entire downloaded list is valid.
 func (c *Client) Update() (err error) {
 	if c.Conf.Debug {
 		log.Println("INFO: Downloading database...")
@@ -26,35 +27,55 @@ func (c *Client) Update() (err error) {
 	if c.Conf.Debug {
 		log.Println("INFO: Database downloaded. Parsing...")
 	}
-	// Flushing entries
-	c.Database = cidranger.NewPCTrieRanger()
+	database := cidranger.NewPCTrieRanger()
 
 	// Importing
 	scanner := bufio.NewScanner(response.Body)
+	lineNumber := 0
 	for scanner.Scan() {
-		if _, currNet, err := net.ParseCIDR(scanner.Text()); err == nil {
-			err := c.Database.Insert(cidranger.NewBasicRangerEntry(*currNet))
-			if err != nil {
-				log.Printf("Error while inserting CIDR to database: %v\n", err.Error())
-			}
+		lineNumber++
+		line := strings.TrimSpace(strings.SplitN(scanner.Text(), "#", 2)[0])
+		if line == "" {
+			continue
+		}
+		_, network, err := net.ParseCIDR(line)
+		if err != nil {
+			return fmt.Errorf("invalid CIDR on line %d: %w", lineNumber, err)
+		}
+		if err := database.Insert(cidranger.NewBasicRangerEntry(*network)); err != nil {
+			return fmt.Errorf("inserting CIDR on line %d: %w", lineNumber, err)
 		}
 	}
-	if c.Conf.Debug {
-		log.Printf("INFO: Database parsed. %v entries.\n", c.Database.Len())
+	if err := scanner.Err(); err != nil {
+		return err
 	}
-	return scanner.Err()
+	if database.Len() == 0 {
+		return errors.New("downloaded database is empty")
+	}
+	c.mu.Lock()
+	c.Database = database
+	c.mu.Unlock()
+	if c.Conf.Debug {
+		log.Printf("INFO: Database parsed. %v entries.\n", database.Len())
+	}
+	return nil
 }
 
 // runAutoUpdates is a simple function to run Update at the set interval
-func (c *Client) runAutoUpdates() error {
-	for range time.Tick(c.Conf.DatabaseUpdateInterval) {
-		if c.Conf.Debug {
-			log.Println("INFO: Database update started...")
-		}
-		err := c.Update()
-		if err != nil {
-			return err
+func (c *Client) runAutoUpdates() {
+	ticker := time.NewTicker(c.Conf.DatabaseUpdateInterval)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-c.stop:
+			return
+		case <-ticker.C:
+			if c.Conf.Debug {
+				log.Println("INFO: Database update started...")
+			}
+			if err := c.Update(); err != nil {
+				log.Printf("GrOxyP auto-update error: %v; keeping the previous database and retrying on the next tick", err)
+			}
 		}
 	}
-	return nil
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/yl2chen/cidranger"
 	"net"
 	"net/http"
-	"os"
+	"sync"
 	"time"
 )
 
@@ -33,7 +33,7 @@ const X4BNetDatacenterIPv4ListURL = "https://raw.githubusercontent.com/X4BNet/li
 // Config is a structure of environmental variables
 //
 // DatabaseDownloadURL: URL to the remote list.
-// You can use X4BNetDatacenterIPv4ListURL or X4BNetDatacenterIPv4ListURL, or any other compatible list.
+// You can use X4BNetVPNIPv4ListURL or X4BNetDatacenterIPv4ListURL, or any other compatible list.
 // DatabaseUpdateInterval: update interval; no duration disables updates
 // WebserverPort: port when in standalone mode
 // WebserverToken: auth token when in standalone mode
@@ -50,33 +50,54 @@ type Client struct {
 	Conf       Config
 	Database   cidranger.Ranger
 	HTTPClient *http.Client
+	mu         sync.RWMutex
+	stop       chan struct{}
+	stopOnce   sync.Once
+	updates    sync.WaitGroup
 }
 
 // NewClient creates a new client with the given config and immediately updates its database.
 // It will also run automatic updates if an interval is specified.
 func NewClient(conf Config) (client *Client, err error) {
+	if conf.DatabaseUpdateInterval < 0 {
+		return nil, fmt.Errorf("database update interval must not be negative")
+	}
 	client = &Client{
 		Conf:       conf,
-		HTTPClient: &http.Client{},
+		HTTPClient: &http.Client{Timeout: 30 * time.Second},
 		Database:   cidranger.NewPCTrieRanger(),
+		stop:       make(chan struct{}),
 	}
 	err = client.Update()
 	if err != nil {
-		return &Client{}, err
+		return nil, err
 	}
-	if client.Conf.DatabaseUpdateInterval.String() != "" {
+	if client.Conf.DatabaseUpdateInterval > 0 {
+		client.updates.Add(1)
 		go func() {
-			err = client.runAutoUpdates()
-			if err != nil {
-				_, _ = fmt.Fprintln(os.Stderr, "GrOxyP auto-update error:", err)
-			}
+			defer client.updates.Done()
+			client.runAutoUpdates()
 		}()
 	}
 	return client, nil
 }
 
+// Close stops automatic updates and waits for any ongoing download to finish.
+func (c *Client) Close() {
+	if c.stop == nil {
+		return
+	}
+	c.stopOnce.Do(func() { close(c.stop) })
+	c.updates.Wait()
+}
+
 // FindIP checks if a given IP is on the list. If so, returns 'true' and the network.
 func (c *Client) FindIP(query net.IP) (found bool, network net.IPNet) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	if query == nil || c.Database == nil {
+		return false, net.IPNet{}
+	}
 	if containingNetworks, err := c.Database.ContainingNetworks(query); len(containingNetworks) > 0 && err == nil {
 		return true, containingNetworks[0].Network()
 	}
